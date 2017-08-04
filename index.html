@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Black Jack Game</title>
+
+		<style type="text/css">
+			/*background image*/
+			body{
+				background:url(https://i.ytimg.com/vi/g-BWdaYlw38/maxresdefault.jpg);
+				background-size: cover;
+			}
+			/*style for the buttons on the page*/
+			input{
+				background-image: linear-gradient(45deg, rgb(11, 51, 13) 40%,rgb(26, 216, 161) 150%);*/
+				background-blend-mode: color-dodge;
+				font-size: 30px;
+				padding: 10px;
+				font-family: "Finger Paint";
+				text-shadow: 0px 0px 5px rgb(12, 255, 7);
+				color:black;
+				width: 200px;
+				height: 100px;
+				font-size: 50px;
+			}
+
+			/*specific style for the bet button*/
+			.totalbetstyle{
+				background-image: linear-gradient(45deg, rgb(11, 51, 13) 40%,rgb(26, 216, 161) 150%);*/
+				background-blend-mode: color-dodge;
+				font-size: 30px;
+				padding: 10px;
+				font-family: "Finger Paint";
+				text-shadow: 0px 0px 5px rgb(12, 255, 7);
+				color:black;
+				width: 130px;
+				height: 80px;
+				font-size: 50px;
+			}
+
+			/*special effect when the user put the mouse on the buttons*/
+			.inputhover:hover{
+				box-shadow: 0px 0px 15px 5px rgb(12, 255, 7);
+				color:white;
+			}
+
+			/*style for the text on the page*/
+			h1, h2{
+				font-size: 110px;
+				color:white;
+				text-shadow: 0px 1px 1px #ddd,
+                     0px 2px 1px #d6d6d6,
+                     0px 3px 1px #ccc,
+                     0px 4px 1px #c5c5c5,
+                     0px 5px 1px #c1c1c1,
+                     0px 6px 1px #bbb,
+                     0px 7px 1px #777,
+                     0px 8px 3px rgba(100, 100, 100, 0.4),
+                     0px 9px 5px rgba(100, 100, 100, 0.1),
+                     0px 10px 7px rgba(12, 255, 7, 0.15),
+                     0px 11px 9px rgba(12, 255, 7, 0.2),
+                     0px 12px 11px rgba(12, 255, 7, 0.25),
+                     0px 13px 15px rgba(12, 255, 7, 0.3);
+			}
+
+			/*style for the text on the page*/
+			h2{
+				font-size: 70px;
+			}
+		</style>
+
+		<link href="https://fonts.googleapis.com/css?family=Finger Paint" rel="stylesheet">
+	</head>
+	<body>
+	
+		<div style="float: left; width: 600px" align="center">
+			<h1>Dealer</h1>
+			<h2 id="dealertext"></h2>
+			<a id="dealerimg"></a>
+		</div>
+
+		<div style="float: right; width: 600px" align="center">
+			<h1>Player</h1>
+			<h2 id="playertext"></h2>
+			<a id="playerimg"></a>
+		</div>
+
+		<img>
+
+		<h1 style="position:absolute;" id="displayResult"></h1>
+
+		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+		
+		<div align="center">
+			<input type="button" class="inputhover" value="START" onclick="start()"> 
+				<a style="padding-right: 5px" ></a>
+			<input type="button" value="HIT" id="hit" class="inputhover" onclick="addCard()">
+				<a style="padding-right: 5px" ></a>
+			<input type="button" value="STAY" id="stay" class="inputhover" onclick="stay()">
+		</div>
+
+		<br>
+
+		<div align="center">
+			<h2>Raise Bet: <input class="totalbetstyle" type="number" step="50" min="0" id="totalbet" value="0"></h2>
+		</div>
+		
+		<div align="center">
+			<h2>TOTAL EARNS: $ <span id="totalearns"> </span></h2>
+		</div>
+
+
+			<script type="text/javascript">
+
+				// creation of variables
+				var inputBet = document.getElementById("totalbet"); 
+				var totalEarns = 0;
+
+				// function that gives two random numbers to the player and the dealer and also evaluates both values
+				function start() {
+					document.getElementById('displayResult').innerHTML = "";
+					player.innerHTML = deck[parseInt(Math.random()*deck.length)] + " " + deck[parseInt(Math.random()*deck.length)];
+					dealer.innerHTML = deck[parseInt(Math.random()*deck.length)] + " " + deck[parseInt(Math.random()*deck.length)];
+    				var playerArray = player.innerHTML.split(" ");
+					var dealerArray = dealer.innerHTML.split(" ");
+					var playerResults = loop(playerArray);
+					var dealerResults = loop(dealerArray);
+					result2(playerResults, dealerResults);
+					unableButtons();
+				}
+
+				// creation of the array with the deck objects and variable that get the ids from the player and dealer 
+				var deck = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+				var player = document.getElementById('playertext');
+				var dealer = document.getElementById('dealertext');
+
+    			// Add one more card to the players hand
+				function addCard(){
+					player.innerHTML += " " + deck[parseInt(Math.random()*deck.length)];
+					document.getElementById('totalbet').disabled = true;
+
+					var playerArray = player.innerHTML.split(" ");
+					var dealerArray = dealer.innerHTML.split(" ");
+					var playerResults = loop(playerArray);
+					var dealerResults = loop(dealerArray);
+					result(playerResults, dealerResults);
+				}
+
+				// Evaluates both hands values when the user hits the button stay
+				function stay(){
+					var playerArray = player.innerHTML.split(" ");
+					var dealerArray = dealer.innerHTML.split(" ");
+					var playerResults = loop(playerArray);
+					var dealerResults = loop(dealerArray);
+					result(playerResults, dealerResults);
+					if (playerResults[0] > dealerResults[0] && playerResults[1] > dealerResults[1] || playerResults[0] > dealerResults[1] && playerResults[1] > dealerResults[0]){
+						displayResult.innerHTML = "YOU WON";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						totalEarns += parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}else if(playerResults[0] < dealerResults[0] && playerResults[1] < dealerResults[1] || playerResults[0] < dealerResults[1] && playerResults[1] < dealerResults[0]){
+						displayResult.innerHTML = "DEALER WON";
+						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
+						totalEarns -= parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}
+				}
+
+				// function that goes through the array and give the elements from the deck the values below (2 values) and returns both values
+				function loop(array){
+					var total = 0;
+					var total1 = 0;	
+					for (i in array){
+						if (array[i] == "A"){
+							total += 11; 
+							total1 += 1;
+						}else if(array[i] == "J" || array[i] == "Q" || array[i] == "K"){
+							total += 10;
+							total1 += 10;
+						}else{
+							total += parseInt(array[i]);
+							total1 += parseInt(array[i]);
+						}
+					}
+					return [total, total1];
+				}
+
+				// function that disable buttons and remove the hover style from them 
+				function disableButtons(){
+					document.getElementById('hit').disabled = true;
+					document.getElementById('stay').disabled = true;
+					document.getElementById('totalbet').disabled = true;
+					
+					var removeClass = 'inputhover';
+					var getStay = document.getElementById('stay');
+					var getHit = document.getElementById('hit');
+
+					/*getStay.className = getHit.className.replace(' ' + removeClass, '').replace(removeClass, '');
+					getHit.className = getHit.className.replace(' ' + removeClass, '').replace(removeClass, '');*/
+				}
+
+				// function that unable the buttons again 
+				function unableButtons(){
+					document.getElementById('hit').disabled = false;
+					document.getElementById('stay').disabled = false;
+					document.getElementById('totalbet').disabled = false;
+				}
+
+				// Evaluates players and dealers value, witch one is greater and displays the result in the DOM by refering to an id in the Body
+				function result(playerResults, dealerResults){
+					var displayResult = document.getElementById('displayResult');
+					if (playerResults[0] == 21 || playerResults[1] == 21){
+						displayResult.innerHTML = "YOU WON";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						totalEarns += parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}else if(playerResults[0] > 21 || playerResults[1] > 21){
+						displayResult.innerHTML = "YOU BUST";
+						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
+						totalEarns -= parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}else if(dealerResults[0] == 21 || dealerResults[1] == 21){
+						displayResult.innerHTML = "DEALER WON";
+						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
+						totalEarns -= parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}else if(playerResults[0] == dealerResults[0] || playerResults[1] == dealerResults[1]){
+						displayResult.innerHTML = "YOU DRAW";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						disableButtons();
+					}
+				}	
+
+				// Evaluates players and dealers value, witch one is greater and displays the result in the DOM by refering to an id in the Body, this function does not disables the buttons and the hovers effects also does not check if the dealer and the player draw
+				function result2(playerResults, dealerResults){
+					var displayResult = document.getElementById('displayResult');
+					if (playerResults[0] == 21 || playerResults[1] == 21){
+						displayResult.innerHTML = "YOU WON";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						totalEarns += parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+					}else if(playerResults[0] > 21 || playerResults[1] > 21){
+						displayResult.innerHTML = "YOU BUST";
+						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
+						totalEarns -= parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+					}else if(dealerResults[0] == 21 || dealerResults[1] == 21){
+						displayResult.innerHTML = "DEALER WON";
+						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
+						totalEarns -= parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+					}
+				}	
+
+				// var imgSources = ['https://upload.wikimedia.org/wikipedia/commons/9/9d/Cards-A-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Cards-2-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Cards-3-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/6/69/Cards-4-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Cards-5-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Cards-6-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Cards-7-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Cards-8-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Cards-9-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Cards-10-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Cards-J-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/3/37/Cards-Q-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/5/55/Cards-K-Diamond.svg']
+
+				// function displayCards(){
+				// 	document.getElementById('playerimg');
+				// 	document.getElementById('dealerimg');
+				// 	for(i in imgSources){
+				// 		if
+				// 	}
+				// }
+
+				// function imagen() {
+
+   	//  				var img = document.createElement("IMG");
+    // 				img.setAttribute("src", imgSources[12]);
+   	//  				img.setAttribute("style", "box-shadow: 0px 0px 25px 3px rgb(12, 255, 7)");
+    // 				img.setAttribute("height", "228");
+    // 				document.getElementById("playerimg").appendChild(img);
+    // 			}
+		</script>
+	</body>
+</html>
+		
+		
