@@ -73,6 +73,7 @@
 	</head>
 	<body>
 	
+		<!-- Div with dealers hand elements in it -->
 		<div style="float: left; width: 600px" align="center">
 			<h1>Dealer</h1>
 			<h2 id="dealertext"></h2>
@@ -82,6 +83,7 @@
 			</div>
 		</div>
 
+		<!-- Div with players hand elements in it -->
 		<div style="float: right; width: 600px" align="center">
 			<h1>Player</h1>
 			<h2 id="playertext"></h2>
@@ -91,12 +93,12 @@
 			</div> 
 		</div>
 
-		<img>
-
+		<!-- tag where the result is gonna be displayed -->
 		<h1 style="position:absolute;" id="displayResult"></h1>
 
 		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 		
+		<!-- div with the game buttons -->
 		<div align="center">
 			<input type="button" class="inputhover" value="START" onclick="start()"> 
 				<a style="padding-right: 5px" ></a>
@@ -107,12 +109,14 @@
 
 		<br>
 
+		<!-- div with players bet -->
 		<div align="center">
 			<h2>Raise Bet: <input class="totalbetstyle" type="number" step="50" min="0" id="totalbet" value="0"></h2>
 		</div>
 		
+		<!-- total earnings -->
 		<div align="center">
-			<h2>TOTAL EARNS: $ <span id="totalearns"> </span></h2>
+			<h2>TOTAL EARNINGS: $ <span id="totalearns"> </span></h2>
 		</div>
 
 
@@ -145,8 +149,10 @@
 					unableButtons();
 				}
 
+				// array with the images of all the cards from a black jack game
 				var imgSources = ['https://upload.wikimedia.org/wikipedia/commons/9/9d/Cards-A-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Cards-2-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Cards-3-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/6/69/Cards-4-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Cards-5-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Cards-6-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Cards-7-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Cards-8-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Cards-9-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Cards-10-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Cards-J-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/3/37/Cards-Q-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/5/55/Cards-K-Diamond.svg']
 
+				// function that will go through the dealers and players hand and display the card as it corresponds 
 				function imagen(array){
 					for (i in array){
 						if (array[i] == "A"){
@@ -181,6 +187,7 @@
 					}
     			}
 
+    			// style of the card that will be displayed with the card as well
     			var img = document.createElement("IMG");
 				img.setAttribute("style", "box-shadow: 0px 0px 25px 3px rgb(12, 255, 7); position: absolute");
 				img.setAttribute("height", "228");
