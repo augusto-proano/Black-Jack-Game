@@ -77,9 +77,8 @@
 		<div style="float: left; width: 600px" align="center">
 			<h1>Dealer</h1>
 			<h2 id="dealertext"></h2>
-			<div>
-				<a id="dealerimg"></a>
-				<a id="dealerimg1"></a>
+			<div id="dealercards">
+				
 			</div>
 		</div>
 
@@ -87,9 +86,8 @@
 		<div style="float: right; width: 600px" align="center">
 			<h1>Player</h1>
 			<h2 id="playertext"></h2>
-			<div>
-				<a id="playerimg"></a>
-				<a id="playerimg1"></a>
+			<div id="playercards">
+				
 			</div> 
 		</div>
 
@@ -122,6 +120,60 @@
 
 			<script type="text/javascript">
 
+			// array with the images of all the cards from a black jack game
+				var imgSources = ['https://upload.wikimedia.org/wikipedia/commons/9/9d/Cards-A-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Cards-2-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Cards-3-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/6/69/Cards-4-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Cards-5-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Cards-6-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Cards-7-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Cards-8-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Cards-9-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Cards-10-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Cards-J-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/3/37/Cards-Q-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/5/55/Cards-K-Diamond.svg']
+
+				// function that will go through the dealers and players hand and display the card as it corresponds 
+				function imagen(random,id){
+					// style of the card that will be displayed with the card as well
+    			var img = document.createElement("img");
+				img.setAttribute("style", "box-shadow: 0px 0px 25px 3px rgb(12, 255, 7); position: static");
+				img.setAttribute("height", "228");
+				img.setAttribute("hspace", "10");
+						// statement that will display each one of the card from the imgSources array
+						switch(deck[random]){
+							case "A":
+								img.setAttribute("src", imgSources[0]);
+								break;
+							case "2":
+								img.setAttribute("src", imgSources[1]);
+								break;
+							case "3":
+								img.setAttribute("src", imgSources[2]);
+								break;
+							case "4":
+								img.setAttribute("src", imgSources[3]);
+								break;
+							case "5":
+								img.setAttribute("src", imgSources[4]);
+								break;
+							case "6":
+								img.setAttribute("src", imgSources[5]);
+								break;
+							case "7":
+								img.setAttribute("src", imgSources[6]);
+								break;
+							case "8":
+								img.setAttribute("src", imgSources[7]);
+								break;
+							case "9":
+								img.setAttribute("src", imgSources[8]);
+								break;
+							case "10":
+								img.setAttribute("src", imgSources[9]);
+								break;
+							case "J":
+								img.setAttribute("src", imgSources[10]);
+								break;
+							case "Q":
+								img.setAttribute("src", imgSources[11]);
+								break;
+							case "K":
+								img.setAttribute("src", imgSources[12]);
+								break;
+						}
+					document.getElementById(id).appendChild(img);
+				}
 				// creation of the array with the deck objects and variable that get the ids from the player and dealer 
 				var deck = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 				var player = document.getElementById('playertext');
@@ -137,27 +189,40 @@
 
 				// function that gives two random numbers to the player and the dealer and also evaluates both values, also activates the rest of the buttons
 				function start() {
+					document.getElementById("dealercards").innerHTML = "";
+					document.getElementById("playercards").innerHTML = "";
+					var random1 = parseInt(Math.random()*deck.length);
+					var random2 = parseInt(Math.random()*deck.length);
+					var random3 = parseInt(Math.random()*deck.length);
+					var random4 = parseInt(Math.random()*deck.length);
 					document.getElementById('displayResult').innerHTML = "";
-					player.innerHTML = deck[parseInt(Math.random()*deck.length)] + " " + deck[parseInt(Math.random()*deck.length)];
-					dealer.innerHTML = deck[parseInt(Math.random()*deck.length)] + " " + deck[parseInt(Math.random()*deck.length)];
+					player.innerHTML = deck[random1] + " " + deck[random2];
+					imagen(random1,"playercards");
+					imagen(random2,"playercards");
+					dealer.innerHTML = deck[random3] + " " + deck[random4];
+					imagen(random3,"dealercards");
+					imagen(random4,"dealercards");
     				var playerArray = player.innerHTML.split(" ");
 					var dealerArray = dealer.innerHTML.split(" ");
 					var playerResults = loop(playerArray);
 					var dealerResults = loop(dealerArray);
-					result2(playerResults, dealerResults);
+					resultStart(playerResults, dealerResults);
 					unableButtons();
+					console.log(loop(playerArray));
+					console.log(loop(dealerArray));
 				}
 
     			// Add one more card to the players hand
 				function addCard(){
-					player.innerHTML += " " + deck[parseInt(Math.random()*deck.length)];
+					var random5 = parseInt(Math.random()*deck.length);
+					player.innerHTML += " " + deck[random5];
+					imagen(random5,"playercards");
 					document.getElementById('totalbet').disabled = true;
-
 					var playerArray = player.innerHTML.split(" ");
 					var dealerArray = dealer.innerHTML.split(" ");
 					var playerResults = loop(playerArray);
 					var dealerResults = loop(dealerArray);
-					result(playerResults, dealerResults);
+					resultHit(playerResults, dealerResults);
 				}
 
 				// Evaluates both hands values when the user hits the button stay
@@ -166,7 +231,6 @@
 					var dealerArray = dealer.innerHTML.split(" ");
 					var playerResults = loop(playerArray);
 					var dealerResults = loop(dealerArray);
-					result(playerResults, dealerResults);
 					if (playerResults[0] > dealerResults[0] && playerResults[1] > dealerResults[1] || playerResults[0] > dealerResults[1] && playerResults[1] > dealerResults[0]){
 						displayResult.innerHTML = "YOU WON";
 						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
@@ -180,6 +244,7 @@
 						document.getElementById('totalearns').innerHTML = totalEarns;
 						disableButtons();
 					}
+					result(playerResults, dealerResults);
 				}
 
 				// function that goes through the array and give the elements from the deck the values below (2 values) and returns both values
@@ -188,8 +253,8 @@
 					var total1 = 0;	
 					for (i in array){
 						if (array[i] == "A"){
-							total += 1; 
-							total1 += 11;
+							total += 11; 
+							total1 += 1;
 						}else if(array[i] == "J" || array[i] == "Q" || array[i] == "K"){
 							total += 10;
 							total1 += 10;
@@ -200,7 +265,7 @@
 					}
 					return [total, total1];
 				}
-
+				
 				// function that disable buttons and remove the hover style from them 
 				function disableButtons(){
 					document.getElementById('hit').disabled = true;
@@ -248,12 +313,40 @@
 						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
 						disableButtons();
 					}
-				}	
+				}
 
-				// Evaluates players and dealers value, witch one is greater and displays the result in the DOM by refering to an id in the Body, this function does not disables the buttons and the hovers effects also does not check if the dealer and the player draw
-				function result2(playerResults, dealerResults){
+				// This function check everything that result function checks except when the dealer and player's hand draw
+				function resultHit(playerResults, dealerResults){
 					var displayResult = document.getElementById('displayResult');
 					if (playerResults[0] == 21 || playerResults[1] == 21){
+						displayResult.innerHTML = "YOU WON";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						totalEarns += parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}else if(playerResults[0] > 21 || playerResults[1] > 21){
+						displayResult.innerHTML = "YOU BUST";
+						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
+						totalEarns -= parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}else if(dealerResults[0] == 21 || dealerResults[1] == 21){
+						displayResult.innerHTML = "DEALER WON";
+						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
+						totalEarns -= parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}
+				}	
+
+				// Evaluates players and dealers hands and only a winner pops up when the dealer's or player's hand are 21, this function does not disables the buttons and the hovers effects also does not check if the dealer and the player draw excepts when both of them are 21.
+				function resultStart(playerResults, dealerResults){
+					var displayResult = document.getElementById('displayResult');
+					if(playerResults[0] == 21 && dealerResults[0] == 21 || playerResults[1] == 21 && dealerResults[1] == 21){
+						displayResult.innerHTML = "YOU DRAW";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						disableButtons();
+					}else if (playerResults[0] == 21 || playerResults[1] == 21){
 						displayResult.innerHTML = "YOU WON";
 						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
 						totalEarns += parseInt(inputBet.value);
@@ -264,51 +357,9 @@
 						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
 						totalEarns -= parseInt(inputBet.value);
 						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
 					}
 				}	
-
-						// array with the images of all the cards from a black jack game
-				/*var imgSources = ['https://upload.wikimedia.org/wikipedia/commons/9/9d/Cards-A-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Cards-2-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Cards-3-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/6/69/Cards-4-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Cards-5-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Cards-6-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Cards-7-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Cards-8-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Cards-9-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Cards-10-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Cards-J-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/3/37/Cards-Q-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/5/55/Cards-K-Diamond.svg']
-
-				// style of the card that will be displayed with the card as well
-    			var img = document.createElement("IMG");
-				img.setAttribute("style", "box-shadow: 0px 0px 25px 3px rgb(12, 255, 7); position: absolute");
-				img.setAttribute("height", "228");
-
-				// function that will go through the dealers and players hand and display the card as it corresponds 
-				function imagen(array){
-					for (i in array){
-						if (array[i] == "A"){
-							img.setAttribute("src", imgSources[0]);
-						}else if(array[i] == "2"){
-							img.setAttribute("src", imgSources[1]);
-						}else if(array[i] == "3"){
-							img.setAttribute("src", imgSources[2]);
-						}else if(array[i] == "4"){
-							img.setAttribute("src", imgSources[3]);
-						}else if(array[i] == "5"){
-							img.setAttribute("src", imgSources[4]);
-						}else if(array[i] == "6"){
-							img.setAttribute("src", imgSources[5]);
-						}else if(array[i] == "7"){
-							img.setAttribute("src", imgSources[6]);
-						}else if(array[i] == "8"){
-							img.setAttribute("src", imgSources[7]);
-						}else if(array[i] == "9"){
-							img.setAttribute("src", imgSources[8]);
-						}else if(array[i] == "10"){
-							img.setAttribute("src", imgSources[9]);
-						}else if(array[i] == "J"){
-							img.setAttribute("src", imgSources[10]);
-						}else if(array[i] == "Q"){
-							img.setAttribute("src", imgSources[11]);
-						}else if(array[i] == "K"){
-							img.setAttribute("src", imgSources[12]);
-						}else{
-
-						}
-					}
-    			}*/
 		</script>
 	</body>
 </html>
