@@ -25,16 +25,8 @@
 
 			/*specific style for the bet button*/
 			.totalbetstyle{
-				background-image: linear-gradient(45deg, rgb(11, 51, 13) 40%,rgb(26, 216, 161) 150%);*/
-				background-blend-mode: color-dodge;
-				font-size: 30px;
-				padding: 10px;
-				font-family: "Finger Paint";
-				text-shadow: 0px 0px 5px rgb(12, 255, 7);
-				color:black;
 				width: 130px;
 				height: 80px;
-				font-size: 50px;
 			}
 
 			/*special effect when the user put the mouse on the buttons*/
@@ -183,9 +175,12 @@
 				var inputBet = document.getElementById("totalbet"); 
 				var totalEarns = 0;
 
-				// Disable the buttons at the begining of the game, they will be activated when the user press start
+				// Disable the buttons at the begining of the game, also disable the css style class that is link to them, they will be activated when the user press start
 				document.getElementById('hit').disabled = true;
 				document.getElementById('stay').disabled = true;
+
+				document.getElementById("hit").removeAttribute("class");
+				document.getElementById("stay").removeAttribute("class");
 
 				// function that gives two random numbers to the player and the dealer and also evaluates both values, also activates the rest of the buttons
 				function start() {
@@ -206,10 +201,10 @@
 					var dealerArray = dealer.innerHTML.split(" ");
 					var playerResults = loop(playerArray);
 					var dealerResults = loop(dealerArray);
-					resultStart(playerResults, dealerResults);
 					unableButtons();
-					console.log(loop(playerArray));
-					console.log(loop(dealerArray));
+					resultStart(playerResults, dealerResults);
+					// console.log(loop(playerArray));
+					// console.log(loop(dealerArray));
 				}
 
     			// Add one more card to the players hand
@@ -217,7 +212,9 @@
 					var random5 = parseInt(Math.random()*deck.length);
 					player.innerHTML += " " + deck[random5];
 					imagen(random5,"playercards");
+
 					document.getElementById('totalbet').disabled = true;
+
 					var playerArray = player.innerHTML.split(" ");
 					var dealerArray = dealer.innerHTML.split(" ");
 					var playerResults = loop(playerArray);
@@ -272,12 +269,8 @@
 					document.getElementById('stay').disabled = true;
 					document.getElementById('totalbet').disabled = true;
 					
-					/*var removeClass = 'inputhover';
-					var getStay = document.getElementById('stay');
-					var getHit = document.getElementById('hit');
-
-					getStay.className = getHit.className.replace(' ' + removeClass, '').replace(removeClass, '');
-					getHit.className = getHit.className.replace(' ' + removeClass, '').replace(removeClass, '');*/
+					document.getElementById("hit").removeAttribute("class");
+					document.getElementById("stay").removeAttribute("class");
 				}
 
 				// function that unable the buttons again 
@@ -285,6 +278,9 @@
 					document.getElementById('hit').disabled = false;
 					document.getElementById('stay').disabled = false;
 					document.getElementById('totalbet').disabled = false;
+
+					document.getElementById("hit").setAttribute("class", "inputhover");
+					document.getElementById("stay").setAttribute("class", "inputhover");
 				}
 
 				// Evaluates players and dealers value, witch one is greater and displays the result in the DOM by refering to an id in the Body
