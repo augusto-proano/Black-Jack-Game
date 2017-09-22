@@ -11,7 +11,7 @@
 			}
 			/*style for the buttons on the page*/
 			input{
-				background-image: linear-gradient(45deg, rgb(11, 51, 13) 40%,rgb(26, 216, 161) 150%);*/
+				background-image: linear-gradient(45deg, rgb(11, 51, 13) 40%,rgb(26, 216, 161) 150%);*
 				background-blend-mode: color-dodge;
 				font-size: 30px;
 				padding: 10px;
@@ -112,6 +112,182 @@
 
 			<script type="text/javascript">
 
+				// creation of the array with the deck objects and variable that get the ids from the player and dealer 
+				var deck = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+				var player = document.getElementById('playertext');
+				var dealer = document.getElementById('dealertext');
+
+				// creation of variables
+				var inputBet = document.getElementById("totalbet"); 
+				var totalEarns = 0;
+
+				// Disable the buttons at the begining of the game, also disable the css style class that is link to them, they will be activated when the user press start
+				document.getElementById('hit').disabled = true;
+				document.getElementById('stay').disabled = true;
+
+				document.getElementById("hit").removeAttribute("class");
+				document.getElementById("stay").removeAttribute("class");
+				
+
+				// function that disable buttons and remove the hover style from them 
+				function disableButtons(){
+					document.getElementById('hit').disabled = true;
+					document.getElementById('stay').disabled = true;
+					document.getElementById('totalbet').disabled = true;
+					
+					document.getElementById("hit").removeAttribute("class");
+					document.getElementById("stay").removeAttribute("class");
+				}
+
+				// function that unable the buttons again 
+				function unableButtons(){
+					document.getElementById('hit').disabled = false;
+					document.getElementById('stay').disabled = false;
+					document.getElementById('totalbet').disabled = false;
+
+					document.getElementById("hit").setAttribute("class", "inputhover");
+					document.getElementById("stay").setAttribute("class", "inputhover");
+				}
+
+
+				// function that goes through the array and give the elements from the deck the values below (2 values) and returns both values
+				function evaluation(array){
+					var total = 0;
+					var total1 = 0;	
+					for (i in array){
+						if (array[i] == "A"){
+							total += 11; 
+							total1 += 1;
+						}else if(array[i] == "J" || array[i] == "Q" || array[i] == "K"){
+							total += 10;
+							total1 += 10;
+						}else{
+							total += parseInt(array[i]);
+							total1 += parseInt(array[i]);
+						}
+					}
+
+					if(total <= 21 && total1 <= 21){
+						return Math.max(total, total1);
+					}else{
+						return Math.min(total, total1);
+					}
+				}
+
+				// function that gives two random numbers to the player and the dealer and also evaluates both values, also activates the rest of the buttons
+				function start() {
+					document.getElementById("dealercards").innerHTML = "";
+					document.getElementById("playercards").innerHTML = "";
+					var random1 = parseInt(Math.random()*deck.length);
+					var random2 = parseInt(Math.random()*deck.length);
+					var random3 = parseInt(Math.random()*deck.length);
+					var random4 = parseInt(Math.random()*deck.length);
+					document.getElementById('displayResult').innerHTML = "";
+					player.innerHTML = deck[random1] + " " + deck[random2];
+					imagen(random1,"playercards");
+					imagen(random2,"playercards");
+					dealer.innerHTML = deck[random3] + " " + deck[random4];
+					imagen(random3,"dealercards");
+					imagen(random4,"dealercards");
+    				var playerArray = player.innerHTML.split(" ");
+					var dealerArray = dealer.innerHTML.split(" ");
+					var playerResults = evaluation(playerArray);
+					var dealerResults = evaluation(dealerArray);
+					unableButtons();
+					resultStart(playerResults, dealerResults);
+				}
+
+				// Evaluates players and dealers hands and only a winner pops up when the dealer's or player's hand are 21, this function does not disables the buttons and the hovers effects also does not check if the dealer and the player draw excepts when both of them are 21.
+				function resultStart(playerResults, dealerResults){
+					var displayResult = document.getElementById('displayResult');
+					if(playerResults == 21 && dealerResults == 21){
+						displayResult.innerHTML = "YOU DRAW";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						disableButtons();
+					}else if (playerResults == 21){
+						displayResult.innerHTML = "YOU WON";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						totalEarns += parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}else if(dealerResults == 21){
+						displayResult.innerHTML = "DEALER WON";
+						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
+						totalEarns -= parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}
+				}	
+				
+    			// Add one more card to the players hand
+				function addCard(){
+					var random5 = parseInt(Math.random()*deck.length);
+					player.innerHTML += " " + deck[random5];
+					imagen(random5,"playercards");
+
+					document.getElementById('totalbet').disabled = true;
+
+					var playerArray = player.innerHTML.split(" ");
+					var dealerArray = dealer.innerHTML.split(" ");
+					var playerResults = evaluation(playerArray);
+					var dealerResults = evaluation(dealerArray);
+					resultHit(playerResults, dealerResults);
+				}
+
+				// This function checks both hands and display the higher number as a winner, does not check when dealer and player's hand draw, also add or substract the bet to total earnings
+				function resultHit(playerResults, dealerResults){
+					var displayResult = document.getElementById('displayResult');
+					if (playerResults == 21){
+						displayResult.innerHTML = "YOU WON";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						totalEarns += parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}else if(playerResults > 21){
+						displayResult.innerHTML = "YOU BUST";
+						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
+						totalEarns -= parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}
+				}	
+
+				// Evaluates both hands values when the user hits the button stay
+				function stay(){
+					var playerArray = player.innerHTML.split(" ");
+					var dealerArray = dealer.innerHTML.split(" ");
+					var playerResults = evaluation(playerArray);
+					var dealerResults = evaluation(dealerArray);
+					var displayResult = document.getElementById('displayResult');
+					resultStay(playerResults, dealerResults);
+					/*console.log(evaluation(playerArray));
+					console.log(evaluation(dealerArray));*/
+				}
+		
+				function resultStay(playerResults, dealerResults){
+					var displayResult = document.getElementById('displayResult');
+					if(playerResults < dealerResults){
+						displayResult.innerHTML = "DEALER WON";
+						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
+						totalEarns -= parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}else if (playerResults > dealerResults){
+						displayResult.innerHTML = "YOU WON";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						totalEarns += parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}else{
+						displayResult.innerHTML = "YOU DRAW";
+						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
+						totalEarns += parseInt(inputBet.value);
+						document.getElementById('totalearns').innerHTML = totalEarns;
+						disableButtons();
+					}
+				}
+
+
 			// array with the images of all the cards from a black jack game
 				var imgSources = ['https://upload.wikimedia.org/wikipedia/commons/9/9d/Cards-A-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Cards-2-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Cards-3-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/6/69/Cards-4-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Cards-5-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Cards-6-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Cards-7-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Cards-8-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Cards-9-Spade.svg', 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Cards-10-Diamond.svg', 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Cards-J-Heart.svg', 'https://upload.wikimedia.org/wikipedia/commons/3/37/Cards-Q-Club.svg', 'https://upload.wikimedia.org/wikipedia/commons/5/55/Cards-K-Diamond.svg']
 
@@ -164,198 +340,8 @@
 								img.setAttribute("src", imgSources[12]);
 								break;
 						}
-					document.getElementById(id).appendChild(img);
+							document.getElementById(id).appendChild(img);
 				}
-				// creation of the array with the deck objects and variable that get the ids from the player and dealer 
-				var deck = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-				var player = document.getElementById('playertext');
-				var dealer = document.getElementById('dealertext');
-
-				// creation of variables
-				var inputBet = document.getElementById("totalbet"); 
-				var totalEarns = 0;
-
-				// Disable the buttons at the begining of the game, also disable the css style class that is link to them, they will be activated when the user press start
-				document.getElementById('hit').disabled = true;
-				document.getElementById('stay').disabled = true;
-
-				document.getElementById("hit").removeAttribute("class");
-				document.getElementById("stay").removeAttribute("class");
-
-				// function that gives two random numbers to the player and the dealer and also evaluates both values, also activates the rest of the buttons
-				function start() {
-					document.getElementById("dealercards").innerHTML = "";
-					document.getElementById("playercards").innerHTML = "";
-					var random1 = parseInt(Math.random()*deck.length);
-					var random2 = parseInt(Math.random()*deck.length);
-					var random3 = parseInt(Math.random()*deck.length);
-					var random4 = parseInt(Math.random()*deck.length);
-					document.getElementById('displayResult').innerHTML = "";
-					player.innerHTML = deck[random1] + " " + deck[random2];
-					imagen(random1,"playercards");
-					imagen(random2,"playercards");
-					dealer.innerHTML = deck[random3] + " " + deck[random4];
-					imagen(random3,"dealercards");
-					imagen(random4,"dealercards");
-    				var playerArray = player.innerHTML.split(" ");
-					var dealerArray = dealer.innerHTML.split(" ");
-					var playerResults = loop(playerArray);
-					var dealerResults = loop(dealerArray);
-					unableButtons();
-					resultStart(playerResults, dealerResults);
-					// console.log(loop(playerArray));
-					// console.log(loop(dealerArray));
-				}
-
-    			// Add one more card to the players hand
-				function addCard(){
-					var random5 = parseInt(Math.random()*deck.length);
-					player.innerHTML += " " + deck[random5];
-					imagen(random5,"playercards");
-
-					document.getElementById('totalbet').disabled = true;
-
-					var playerArray = player.innerHTML.split(" ");
-					var dealerArray = dealer.innerHTML.split(" ");
-					var playerResults = loop(playerArray);
-					var dealerResults = loop(dealerArray);
-					resultHit(playerResults, dealerResults);
-				}
-
-				// Evaluates both hands values when the user hits the button stay
-				function stay(){
-					var playerArray = player.innerHTML.split(" ");
-					var dealerArray = dealer.innerHTML.split(" ");
-					var playerResults = loop(playerArray);
-					var dealerResults = loop(dealerArray);
-					if (playerResults[0] > dealerResults[0] && playerResults[1] > dealerResults[1] || playerResults[0] > dealerResults[1] && playerResults[1] > dealerResults[0]){
-						displayResult.innerHTML = "YOU WON";
-						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
-						totalEarns += parseInt(inputBet.value);
-						document.getElementById('totalearns').innerHTML = totalEarns;
-						disableButtons();
-					}else if(playerResults[0] < dealerResults[0] && playerResults[1] < dealerResults[1] || playerResults[0] < dealerResults[1] && playerResults[1] < dealerResults[0]){
-						displayResult.innerHTML = "DEALER WON";
-						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
-						totalEarns -= parseInt(inputBet.value);
-						document.getElementById('totalearns').innerHTML = totalEarns;
-						disableButtons();
-					}
-					result(playerResults, dealerResults);
-				}
-
-				// function that goes through the array and give the elements from the deck the values below (2 values) and returns both values
-				function loop(array){
-					var total = 0;
-					var total1 = 0;	
-					for (i in array){
-						if (array[i] == "A"){
-							total += 11; 
-							total1 += 1;
-						}else if(array[i] == "J" || array[i] == "Q" || array[i] == "K"){
-							total += 10;
-							total1 += 10;
-						}else{
-							total += parseInt(array[i]);
-							total1 += parseInt(array[i]);
-						}
-					}
-					return [total, total1];
-				}
-				
-				// function that disable buttons and remove the hover style from them 
-				function disableButtons(){
-					document.getElementById('hit').disabled = true;
-					document.getElementById('stay').disabled = true;
-					document.getElementById('totalbet').disabled = true;
-					
-					document.getElementById("hit").removeAttribute("class");
-					document.getElementById("stay").removeAttribute("class");
-				}
-
-				// function that unable the buttons again 
-				function unableButtons(){
-					document.getElementById('hit').disabled = false;
-					document.getElementById('stay').disabled = false;
-					document.getElementById('totalbet').disabled = false;
-
-					document.getElementById("hit").setAttribute("class", "inputhover");
-					document.getElementById("stay").setAttribute("class", "inputhover");
-				}
-
-				// Evaluates players and dealers value, witch one is greater and displays the result in the DOM by refering to an id in the Body
-				function result(playerResults, dealerResults){
-					var displayResult = document.getElementById('displayResult');
-					if (playerResults[0] == 21 || playerResults[1] == 21){
-						displayResult.innerHTML = "YOU WON";
-						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
-						totalEarns += parseInt(inputBet.value);
-						document.getElementById('totalearns').innerHTML = totalEarns;
-						disableButtons();
-					}else if(playerResults[0] > 21 || playerResults[1] > 21){
-						displayResult.innerHTML = "YOU BUST";
-						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
-						totalEarns -= parseInt(inputBet.value);
-						document.getElementById('totalearns').innerHTML = totalEarns;
-						disableButtons();
-					}else if(dealerResults[0] == 21 || dealerResults[1] == 21){
-						displayResult.innerHTML = "DEALER WON";
-						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
-						totalEarns -= parseInt(inputBet.value);
-						document.getElementById('totalearns').innerHTML = totalEarns;
-						disableButtons();
-					}else if(playerResults[0] == dealerResults[0] || playerResults[1] == dealerResults[1] || playerResults[0] == dealerResults[1]){
-						displayResult.innerHTML = "YOU DRAW";
-						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
-						disableButtons();
-					}
-				}
-
-				// This function check everything that result function checks except when the dealer and player's hand draw
-				function resultHit(playerResults, dealerResults){
-					var displayResult = document.getElementById('displayResult');
-					if (playerResults[0] == 21 || playerResults[1] == 21){
-						displayResult.innerHTML = "YOU WON";
-						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
-						totalEarns += parseInt(inputBet.value);
-						document.getElementById('totalearns').innerHTML = totalEarns;
-						disableButtons();
-					}else if(playerResults[0] > 21 || playerResults[1] > 21){
-						displayResult.innerHTML = "YOU BUST";
-						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
-						totalEarns -= parseInt(inputBet.value);
-						document.getElementById('totalearns').innerHTML = totalEarns;
-						disableButtons();
-					}else if(dealerResults[0] == 21 || dealerResults[1] == 21){
-						displayResult.innerHTML = "DEALER WON";
-						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
-						totalEarns -= parseInt(inputBet.value);
-						document.getElementById('totalearns').innerHTML = totalEarns;
-						disableButtons();
-					}
-				}	
-
-				// Evaluates players and dealers hands and only a winner pops up when the dealer's or player's hand are 21, this function does not disables the buttons and the hovers effects also does not check if the dealer and the player draw excepts when both of them are 21.
-				function resultStart(playerResults, dealerResults){
-					var displayResult = document.getElementById('displayResult');
-					if(playerResults[0] == 21 && dealerResults[0] == 21 || playerResults[1] == 21 && dealerResults[1] == 21){
-						displayResult.innerHTML = "YOU DRAW";
-						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
-						disableButtons();
-					}else if (playerResults[0] == 21 || playerResults[1] == 21){
-						displayResult.innerHTML = "YOU WON";
-						displayResult.setAttribute("style", " color:rgb(28, 178, 14); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c1c1c1, 0px 6px 1px #bbb, 0px 7px 1px #777, 0px 8px 3px rgba(100, 100, 100, 0.4), 0px 9px 5px rgba(100, 100, 100, 0.1), 0px 10px 7px rgba(28, 255, 7, 0.15), 0px 11px 9px rgba(28, 255, 7, 0.2), 0px 12px 11px rgba(28, 255, 7, 0.25), 0px 13px 15px rgba(28, 255, 7, 0.3); ");
-						totalEarns += parseInt(inputBet.value);
-						document.getElementById('totalearns').innerHTML = totalEarns;
-						disableButtons();
-					}else if(dealerResults[0] == 21 || dealerResults[1] == 21){
-						displayResult.innerHTML = "DEALER WON";
-						displayResult.setAttribute("style", " color:rgb(198, 23, 13); position:absolute; width: 99%; top: 10%; text-align: center; font-size: 110px; text-shadow: 0px 1px 1px #ddd, 0px 2px 1px #d6d6d6, 0px 3px 1px #ccc, 0px 4px 1px #c5c5c5, 0px 5px 1px #c6170d, 0px 6px 1px #c6170d, 0px 7px 1px #777, 0px 8px 3px rgba(0, 0, 0, 0.4), 0px 9px 5px rgba(0, 0, 0, 0.1), 0px 10px 7px rgba(0, 0, 0, 0.15), 0px 11px 9px rgba(198, 23, 13, 0.2), 10px 12px 11px rgba(198, 23, 13, 0.25), 0px 13px 15px rgba(198, 23, 13, 0.3); ");
-						totalEarns -= parseInt(inputBet.value);
-						document.getElementById('totalearns').innerHTML = totalEarns;
-						disableButtons();
-					}
-				}	
 		</script>
 	</body>
 </html>
